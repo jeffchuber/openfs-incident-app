@@ -8,12 +8,12 @@ interface TermLine {
 }
 
 const SAMPLE_COMMANDS = [
-  'cat /ax/incidents/open.csv | grep P1',
-  'cat /ax/oncall/schedule.csv | grep infra',
+  'cat /openfs/incidents/open.csv | grep P1',
+  'cat /openfs/oncall/schedule.csv | grep infra',
   'search "redis memory OOM"',
-  'grep ERROR /ax/logs/redis-2025-06-15.log',
-  'cat /ax/logs/redis-2025-06-15.log | grep OOM | wc -l',
-  'stat /ax/incidents/open.csv',
+  'grep ERROR /openfs/logs/redis-2025-06-15.log',
+  'cat /openfs/logs/redis-2025-06-15.log | grep OOM | wc -l',
+  'stat /openfs/incidents/open.csv',
 ];
 
 function highlightLine(line: string): string {

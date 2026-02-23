@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBackend, serialExec } from "@/lib/ax-backend";
+import { getBackend, serialExec } from "@/lib/backend";
 
 export async function POST(req: Request) {
   const backend = getBackend();

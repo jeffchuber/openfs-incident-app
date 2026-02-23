@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBackend } from "@/lib/ax-backend";
+import { getBackend } from "@/lib/backend";
 
 export async function GET(req: Request) {
   const backend = getBackend();
@@ -12,11 +12,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "missing path param" }, { status: 400 });
   }
 
-  // Strip /ax prefix for the vfs client
-  const axPath = filePath.startsWith("/ax/") ? filePath.slice(3) : filePath;
+  // Strip /openfs prefix for the vfs client
+  const vfsPath = filePath.startsWith("/openfs/") ? filePath.slice(7) : filePath;
 
   try {
-    const content = await backend.client.read(axPath);
+    const content = await backend.client.read(vfsPath);
     return NextResponse.json({ content });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

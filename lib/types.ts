@@ -1,4 +1,4 @@
-export type { Entry as AxEntry, SearchResult as AxSearchResult } from "@open-fs/core";
+export type { Entry, SearchResult } from "@open-fs/core";
 
 export interface TreeNode {
   name: string;

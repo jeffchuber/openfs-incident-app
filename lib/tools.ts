@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { getBackend, serialExec, buildTree } from "./ax-backend";
+import { getBackend, serialExec, buildTree } from "./backend";
 
 export function createIncidentTools() {
   return {
@@ -8,9 +8,9 @@ export function createIncidentTools() {
       description:
         "Run a shell command in the incident response environment. " +
         "Available commands: cat, ls, grep, wc, head, tail, sort, uniq, cut, stat, search. " +
-        "The filesystem is mounted at /ax with subdirectories: " +
-        "/ax/incidents (postgres), /ax/oncall (postgres), /ax/logs (s3), " +
-        "/ax/runbooks (chroma), /ax/scratch (memory).",
+        "The filesystem is mounted at /openfs with subdirectories: " +
+        "/openfs/incidents (postgres), /openfs/oncall (postgres), /openfs/logs (s3), " +
+        "/openfs/runbooks (chroma), /openfs/scratch (memory).",
       parameters: z.object({
         command: z.string().describe("The shell command to execute"),
       }),
@@ -49,17 +49,17 @@ export function createIncidentTools() {
 
     read_file: tool({
       description:
-        "Read the contents of a file. Use /ax/ prefix paths " +
-        "(e.g. /ax/incidents/open.csv, /ax/logs/redis-2025-06-15.log).",
+        "Read the contents of a file. Use /openfs/ prefix paths " +
+        "(e.g. /openfs/incidents/open.csv, /openfs/logs/redis-2025-06-15.log).",
       parameters: z.object({
-        path: z.string().describe("Full path to the file (e.g. /ax/incidents/open.csv)"),
+        path: z.string().describe("Full path to the file (e.g. /openfs/incidents/open.csv)"),
       }),
       execute: async ({ path }) => {
         const backend = getBackend();
         await backend.ready;
-        const axPath = path.startsWith("/ax/") ? path.slice(3) : path;
+        const vfsPath = path.startsWith("/openfs/") ? path.slice(7) : path;
         try {
-          const content = await backend.client.read(axPath);
+          const content = await backend.client.read(vfsPath);
           return { path, content };
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
@@ -92,11 +92,11 @@ export function createIncidentTools() {
 export const SYSTEM_PROMPT = `You are an SRE incident response copilot. You help engineers triage, diagnose, and resolve production incidents.
 
 You have access to an incident response environment with the following filesystem layout:
-- /ax/incidents/ — Incident records (Postgres backend). CSV files with open and closed incidents.
-- /ax/oncall/ — On-call schedules (Postgres backend). CSV with team rotations.
-- /ax/logs/ — Application and infrastructure logs (S3 backend). Timestamped log files.
-- /ax/runbooks/ — Runbooks and postmortems (Chroma backend, semantic-searchable).
-- /ax/scratch/ — Ephemeral workspace (in-memory).
+- /openfs/incidents/ — Incident records (Postgres backend). CSV files with open and closed incidents.
+- /openfs/oncall/ — On-call schedules (Postgres backend). CSV with team rotations.
+- /openfs/logs/ — Application and infrastructure logs (S3 backend). Timestamped log files.
+- /openfs/runbooks/ — Runbooks and postmortems (Chroma backend, semantic-searchable).
+- /openfs/scratch/ — Ephemeral workspace (in-memory).
 
 Available tools:
 - exec_command: Run shell commands (cat, ls, grep, wc, head, tail, sort, search, stat)

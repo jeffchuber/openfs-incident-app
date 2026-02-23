@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBackend, buildTree } from "@/lib/ax-backend";
+import { getBackend, buildTree } from "@/lib/backend";
 
 export async function GET() {
   const backend = getBackend();

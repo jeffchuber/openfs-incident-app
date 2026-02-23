@@ -38,11 +38,11 @@ export interface Backend {
 // ── Backend map for tree building ─────────────────────
 
 const BACKEND_MAP: Record<string, string> = {
-  "/ax/incidents": "postgres",
-  "/ax/oncall": "postgres",
-  "/ax/logs": "s3",
-  "/ax/runbooks": "chroma",
-  "/ax/scratch": "memory",
+  "/openfs/incidents": "postgres",
+  "/openfs/oncall": "postgres",
+  "/openfs/logs": "s3",
+  "/openfs/runbooks": "chroma",
+  "/openfs/scratch": "memory",
 };
 
 export function getBackendLabel(path: string): string | null {
@@ -78,14 +78,14 @@ async function listChildren(
   for (const entry of entries) {
     const fullPath =
       path === "/" ? `/${entry.name}` : `${path}/${entry.name}`;
-    const axPath = `/ax${fullPath}`;
+    const vfsPath = `/openfs${fullPath}`;
     const node: TreeNode = {
       name: entry.name,
-      path: axPath,
+      path: vfsPath,
       is_dir: entry.is_dir,
       size: entry.size,
       modified: entry.modified,
-      backend: getBackendLabel(axPath),
+      backend: getBackendLabel(vfsPath),
     };
     if (entry.is_dir) {
       node.children = await listChildren(client, fullPath);
@@ -107,15 +107,15 @@ export async function buildTree(
   const nodes: TreeNode[] = [];
   for (const mp of MOUNT_POINTS) {
     const name = mp.slice(1); // strip leading /
-    const axPath = `/ax${mp}`;
+    const vfsPath = `/openfs${mp}`;
     const children = await listChildren(client, mp);
     nodes.push({
       name,
-      path: axPath,
+      path: vfsPath,
       is_dir: true,
       size: null,
       modified: null,
-      backend: getBackendLabel(axPath),
+      backend: getBackendLabel(vfsPath),
       children,
     });
   }
@@ -153,12 +153,12 @@ function createDevBackend(): Backend {
 
   const fs = new MountableFs({
     base: new InMemoryFs(),
-    mounts: [{ mountPoint: "/ax", filesystem: openFs }],
+    mounts: [{ mountPoint: "/openfs", filesystem: openFs }],
   });
 
   const bash = new Bash({
     fs,
-    cwd: "/ax",
+    cwd: "/openfs",
     customCommands: [
       createSearchCommand(client) as any,
       createGrepCommand(client) as any,
@@ -191,12 +191,12 @@ function createProdBackend(): Backend {
 
     const fs = new MountableFs({
       base: new InMemoryFs(),
-      mounts: [{ mountPoint: "/ax", filesystem: openFs }],
+      mounts: [{ mountPoint: "/openfs", filesystem: openFs }],
     });
 
     bash = new Bash({
       fs,
-      cwd: "/ax",
+      cwd: "/openfs",
       customCommands: [
         createSearchCommand(vfs) as any,
         createGrepCommand(vfs) as any,

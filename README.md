@@ -8,11 +8,11 @@ An SRE copilot for triaging production incidents. Claude can browse incident rec
 
 | Mount path | Backend | Contents |
 |---|---|---|
-| `/ax/incidents/` | Postgres | Open/closed incident CSVs |
-| `/ax/oncall/` | Postgres | On-call rotation schedules |
-| `/ax/logs/` | S3 | Timestamped application logs |
-| `/ax/runbooks/` | Chroma | Runbooks and postmortems (semantic-searchable) |
-| `/ax/scratch/` | In-memory | Ephemeral workspace |
+| `/openfs/incidents/` | Postgres | Open/closed incident CSVs |
+| `/openfs/oncall/` | Postgres | On-call rotation schedules |
+| `/openfs/logs/` | S3 | Timestamped application logs |
+| `/openfs/runbooks/` | Chroma | Runbooks and postmortems (semantic-searchable) |
+| `/openfs/scratch/` | In-memory | Ephemeral workspace |
 
 The UI has four panels:
 - **File explorer** (left) -- browse the virtual filesystem with backend labels
@@ -84,7 +84,7 @@ components/
   tool-result.tsx         # Renders tool call results inline
   terminal.tsx            # Shell command input/output
 lib/
-  ax-backend.ts           # Backend singleton (dev mock or prod OpenFS)
+  backend.ts              # Backend singleton (dev mock or prod OpenFS)
   mock-backend.ts         # In-memory Vfs mock with multi-backend simulation
   seed-data.ts            # Incident data seeded into dev mock
   seed-prod.ts            # Script to seed production backends
@@ -109,7 +109,7 @@ openfs.yaml               # OpenFS backend configuration (production)
 
 **Production mode:** `createVfs()` spawns the `openfs mcp` Rust binary as a subprocess and communicates over stdio using [MCP](https://modelcontextprotocol.io). The binary handles routing to Postgres, S3, and Chroma based on `openfs.yaml`.
 
-In both modes, the `Vfs` is wrapped in an `OpenFs` adapter (from `@open-fs/just-bash`) and mounted into a `just-bash` shell at `/ax`. This gives Claude and the terminal full shell access (`cat`, `ls`, `grep`, `search`) across all backends through a unified path namespace.
+In both modes, the `Vfs` is wrapped in an `OpenFs` adapter (from `@open-fs/just-bash`) and mounted into a `just-bash` shell at `/openfs`. This gives Claude and the terminal full shell access (`cat`, `ls`, `grep`, `search`) across all backends through a unified path namespace.
 
 ## License
 
