@@ -220,7 +220,7 @@ The `OpenFs` class from `@open-fs/just-bash` adapts the OpenFS `Vfs` interface t
 Two custom commands are also registered:
 
 - **`search "query"`** -- semantic search across Chroma-backed runbooks (calls `Vfs.search()`)
-- **`openfsgrep pattern [path]`** -- regex search across all backends (calls `Vfs.grep()`)
+- **`grep pattern [path]`** -- regex search across all backends, transparently uses server-side `Vfs.grep()` for OpenFS paths
 
 **Code pointers:**
 - OpenFs adapter class: `@open-fs/just-bash` (`~/src/just-bash-openfs/src/openfs.ts`)

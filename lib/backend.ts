@@ -161,7 +161,7 @@ function createDevBackend(): Backend {
     cwd: "/openfs",
     customCommands: [
       createSearchCommand(client) as any,
-      createGrepCommand(client) as any,
+      createGrepCommand(client, "/openfs") as any,
     ],
   });
 
@@ -199,7 +199,7 @@ function createProdBackend(): Backend {
       cwd: "/openfs",
       customCommands: [
         createSearchCommand(vfs) as any,
-        createGrepCommand(vfs) as any,
+        createGrepCommand(vfs, "/openfs") as any,
       ],
     });
 
