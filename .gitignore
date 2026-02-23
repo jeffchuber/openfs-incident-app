@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# next.js build
+.next/
+out/
+
+# env files (contain secrets)
+.env
+.env.local
+.env.*.local
+
+# editor / os
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# debug logs
+npm-debug.log*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# vercel
+.vercel
